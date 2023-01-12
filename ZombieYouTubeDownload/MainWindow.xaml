@@ -1,0 +1,39 @@
+﻿<Window x:Class="ZombieYouTubeDownload.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZombieYouTubeDownload"
+        mc:Ignorable="d"
+        Title="Zombie YouTube Download" Height="450" Width="800">
+    <Grid>
+        <StackPanel Background="#FF969696">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Margin" Value="0,10,0,0"/>
+                </Style>
+            </StackPanel.Resources>
+            <DockPanel HorizontalAlignment="Left">
+                <Label Width="80" FontSize="16">URL</Label>
+                <TextBox Name="txtUrl" Width="400" FontSize="16" Text="{Binding Url}" GotFocus="TextBox_GotFocus" />
+            </DockPanel>
+            <DockPanel HorizontalAlignment="Left">
+                <Label Width="80" FontSize="16">Start</Label>
+                <TextBox Name="txtBegin" Width="200" Text="{Binding Start, StringFormat=hh:mm:ss}" FontSize="16" />
+            </DockPanel>
+            <DockPanel HorizontalAlignment="Left">
+                <Label Width="80" FontSize="16">End</Label>
+                <TextBox Name="txtEnd" Width="200" FontSize="16" Text="{Binding End, Mode=TwoWay, StringFormat=hh:mm:ss}" />
+            </DockPanel>
+            <DockPanel HorizontalAlignment="Left">
+                <Label Width="80" FontSize="16">Result</Label>
+                <TextBox Name="txtResult"  Width="600" FontSize="16" Text="{Binding Result, Mode=TwoWay}" GotFocus="TextBox_GotFocus" />
+            </DockPanel>
+            <DockPanel HorizontalAlignment="Left" Margin="0,10,0,0">
+                <Button FontSize="16" Width ="100" Click="CalculateResult" Margin="10,0,0,0">Calculate</Button>
+                <Button FontSize="16" Width ="100" Click="Reset" Margin="10,0,0,0">Reset</Button>
+            </DockPanel>
+        </StackPanel>
+
+    </Grid>
+</Window>
