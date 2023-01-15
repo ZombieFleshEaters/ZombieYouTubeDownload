@@ -57,7 +57,7 @@ namespace ZombieYouTubeDownload
             var start = new TimeSpan(startChunks[0], startChunks[1], startChunks[2]);
             var end = new TimeSpan(endChunks[0], endChunks[1], endChunks[2]);
 
-            if (start > end)
+            if (start > end || start == new TimeSpan())
             {
                 _urlContext.Start = UrlContext.TimeCode;
                 _urlContext.End = UrlContext.TimeCode;
