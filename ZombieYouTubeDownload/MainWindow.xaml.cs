@@ -39,23 +39,17 @@ namespace ZombieYouTubeDownload
             _urlContext.Result = "";
 
             //Validation
-            if (!IsValidTimeCode(_urlContext.Start))
+            if (!IsValidTimeCode(_urlContext.Start, out TimeSpan start))
             {
                 _urlContext.Start = UrlContext.TimeCode;
                 return;
             }
 
-            if (!IsValidTimeCode(_urlContext.End))
+            if (!IsValidTimeCode(_urlContext.End, out TimeSpan end))
             {
                 _urlContext.End = UrlContext.TimeCode;
                 return;
             }
-
-            var startChunks = _urlContext.Start.Split(':').Select(s => int.Parse(s)).ToArray();
-            var endChunks = _urlContext.End.Split(":").Select(s => int.Parse(s)).ToArray();
-
-            var start = new TimeSpan(startChunks[0], startChunks[1], startChunks[2]);
-            var end = new TimeSpan(endChunks[0], endChunks[1], endChunks[2]);
 
             if (start > end || start == new TimeSpan())
             {
@@ -107,16 +101,20 @@ namespace ZombieYouTubeDownload
         #endregion
 
         #region Private functions
-        private bool IsValidTimeCode(string timeCode)
+        private bool IsValidTimeCode(string timeCode, out TimeSpan time)
         {
+            time = new TimeSpan();
             if (timeCode.Length > 8) return false;
             if (timeCode.Split(':').Length != 3) return false;
-            foreach (var chunk in timeCode.Split(':'))
+            var chunks = timeCode.Split(':');
+            foreach (var chunk in chunks)
             {
                 if (chunk.Length != 2) return false;
                 if (!chunk.All(a => Char.IsNumber(a))) return false;
                 if (int.TryParse(chunk, out int chunkResult) && chunkResult >= 60) return false;
             }
+            
+            time = new TimeSpan(int.Parse(chunks[0]), int.Parse(chunks[1]), int.Parse(chunks[2]));
 
             return true;
         }
