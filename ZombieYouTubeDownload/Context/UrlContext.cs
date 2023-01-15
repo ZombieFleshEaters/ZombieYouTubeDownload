@@ -15,6 +15,17 @@ namespace ZombieYouTubeDownload.Context
         private string _start = "";
         private string _end = "";
         private string _result = "";
+        private bool _videoInformation = false;
+        
+        public bool VideoInformation
+        {
+            get => _videoInformation;
+            set
+            {
+                _videoInformation = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string Url 
         { 

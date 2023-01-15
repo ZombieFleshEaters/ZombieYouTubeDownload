@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
@@ -56,7 +57,7 @@ namespace ZombieYouTubeDownload
             var start = new TimeSpan(startChunks[0], startChunks[1], startChunks[2]);
             var end = new TimeSpan(endChunks[0], endChunks[1], endChunks[2]);
 
-            if (start>end)
+            if (start > end)
             {
                 _urlContext.Start = UrlContext.TimeCode;
                 _urlContext.End = UrlContext.TimeCode;
@@ -65,11 +66,33 @@ namespace ZombieYouTubeDownload
 
             if (!Uri.TryCreate(_urlContext.Url, UriKind.Absolute, out _))
             {
-                _urlContext.Url ="";
+                _urlContext.Url = "";
                 return;
             }
 
-            _urlContext.Result = GetFormattedString();
+            _urlContext.Result = GetFormattedString(url: _urlContext.Url,
+                                                    videoInformation: _urlContext.VideoInformation,
+                                                    start: _urlContext.Start,
+                                                    end: _urlContext.End);
+        }
+
+        public void SendCommand(object sender, RoutedEventArgs e)
+        {
+            if(string.IsNullOrEmpty(_urlContext.Url))
+            {
+                return;
+            }
+
+            var startInfo = new ProcessStartInfo()
+            {
+                FileName = "cmd.exe",
+                UseShellExecute = false,
+                Arguments = @"/K cd C:\ &" + _urlContext.Result
+            };
+            var process = new Process { StartInfo = startInfo };
+
+            process.Start();
+            process.WaitForExit();
         }
 
         private void Reset(object sender, RoutedEventArgs e)
@@ -86,7 +109,7 @@ namespace ZombieYouTubeDownload
         #region Private functions
         private bool IsValidTimeCode(string timeCode)
         {
-            if (timeCode.Length> 8) return false;
+            if (timeCode.Length > 8) return false;
             if (timeCode.Split(':').Length != 3) return false;
             foreach (var chunk in timeCode.Split(':'))
             {
@@ -98,14 +121,25 @@ namespace ZombieYouTubeDownload
             return true;
         }
 
-        private string GetFormattedString()
+        private string GetFormattedString(string url, bool videoInformation, string start, string end)
         {
             //Get video information:
             //yt-dlp --list-formats https://www.youtube.com/watch?v=LNHbm7GBHwg&t=1767s
 
-            return $"""
-                    yt-dlp --output "D:\Video Sources\%(title)s-%(id)s.%(ext)s" -S res,ext:mp4:m4a --recode mp4 --external-downloader ffmpeg --external-downloader-args "ffmpeg_i:-ss {_urlContext.Start} -to {_urlContext.End}" "{_urlContext.Url}"
+            if(videoInformation)
+            {
+                return $"""
+                    yt-dlp --list-formats {url}
                     """.Trim();
+            }
+            else
+            {
+                return $"""
+                    yt-dlp --output "D:\Video Sources\%(title)s-%(id)s.%(ext)s" -S res,ext:mp4:m4a --recode mp4 --external-downloader ffmpeg --external-downloader-args "ffmpeg_i:-ss {start} -to {end}" "{url}"
+                    """.Trim();
+            }
+
+
         }
         #endregion
 
