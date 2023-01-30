@@ -96,7 +96,7 @@ namespace ZombieYouTubeDownload
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             TextBox textBox = (TextBox)sender;
-            textBox.Dispatcher.BeginInvoke(new Action(() => textBox.SelectAll()));
+            textBox.Dispatcher.BeginInvoke(new Action(textBox.SelectAll));
         }
         #endregion
 
